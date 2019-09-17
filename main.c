@@ -9,11 +9,12 @@
 #define MAX_SYMBOLS 255
 
 enum {DONE, OK, EMPTY_LINE};
-typedef struct 
+struct SymbolTableEntry
 {
 	int address;
 	char label[MAX_LABEL_LEN + 1];	
-} TableEntry;
+};
+typedef struct SymbolTableEntry TableEntry;
 
 
 int determineValidHex(char *startingAddress);

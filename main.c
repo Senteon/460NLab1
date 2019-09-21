@@ -75,12 +75,12 @@ int main(int argc, char* argv[])
 
     if (!infile)  //Open input file
     {
-      printf("Error: Cannot open file %s\n", argv[1]);
+      printf("Error: Cannot open file %s.\n", argv[1]);
       exit(4);
     }
     if (!outfile) //Open output file
     {
-      printf("Error: Cannot open file %s\n", argv[2]);
+      printf("Error: Cannot open file %s.\n", argv[2]);
       exit(4);
     }
 
@@ -831,7 +831,6 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         }
     }
     while( lRet != DONE );
-    printf("a\n");
 }
 
 //Checks if something is in the symbol table
@@ -1028,7 +1027,6 @@ void printSymbolTable(TableEntry symbolTable[], int tableLoc)
 //Checks if a function is empty by spaces
 int onlySpaces(char *spaces)
 {
-	//printf("called\n");
 	if(strlen(spaces) == 0) return 1;
 	for (int i = 0; i < strlen(spaces); i++)
 	{

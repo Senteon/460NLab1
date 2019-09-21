@@ -12,7 +12,7 @@ enum {DONE, OK, EMPTY_LINE};
 struct SymbolTableEntry
 {
 	int address;
-	char label[MAX_LABEL_LEN + 1];	
+	char label[MAX_LABEL_LEN + 1];
 	int fillValue;
 };
 typedef struct SymbolTableEntry TableEntry;
@@ -50,7 +50,7 @@ int isInSymbolTable2(char *lLabel, TableEntry symbolTable[], int tableLoc, int a
 
 
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
 	TableEntry symbolTable[MAX_SYMBOLS] = {0};
 	FILE *infile;
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 	char pLine[MAX_LINE_LENGTH + 1] = {0}; //Initialize pointers to be passed
 	char *pLabel, *pOpcode, *pArg1, *pArg2, *pArg3, *pArg4;
 	char startingAddress[5];
-	int addressFlag = 1; 
+	int addressFlag = 1;
 	int tableLoc;
 
     infile = fopen(argv[1], "r");
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     fputs ("\n", outfile);
     secondPass(infile, outfile, symbolTable, startingAddress, tableLoc);
 
-    
+
 
     fclose(infile); //Close files
     fclose(outfile);
@@ -173,7 +173,7 @@ int determineValidHex(char *startingAddress, int addressFlag)
 //Function to determine if the string is an opcode
 int isOpcode(char *inLoc)
 {
-	/* Declaring all possibilities */                                                                                                                             
+	/* Declaring all possibilities */
 	char *list[31] = {"add", "and", "br", "brn", "brz", "brp", "brnz", "brnp", "brzp", "brnzp", "halt", "jmp", "jsr", "jsrr", "ldb", "ldw", "lea", "nop", "not", "ret", "lshf", "rshfl", "rshfa", "rti", "stb", "stw", "trap", "xor", ".orig", ".fill", ".end"};
 	char *temp = inLoc;
 
@@ -183,7 +183,7 @@ int isOpcode(char *inLoc)
 		while (*temp != '\0') //While loop to check entirety of input
 		{
 			if (*temp != (list[i])[j]) break; //If the input is not a match for the opcode check the next opcode
-			else 
+			else
 			{
 				temp++; //Next letter of the input
 				j++; //Next letter in this opcode
@@ -216,7 +216,7 @@ int readAndParse(FILE *pInfile, char *pLine, char **pLabel, char **pOpcode, char
 	if (!(lPtr = strtok(pLine, "\t\n ,"))) return(EMPTY_LINE);
 
 	/* Found a label */
-	if (isOpcode(lPtr) == -1 && lPtr[0] != '.') 
+	if (isOpcode(lPtr) == -1 && lPtr[0] != '.')
 	{
 		*pLabel = lPtr;
 		if(!(lPtr = strtok( NULL, "\t\n ,"))) return(OK);
@@ -269,7 +269,7 @@ int firstPass(FILE *in, TableEntry symbolTable[], char *startingAddress)
         		if (isValidLabel(lLabel) == 0)
         		{
         			if(strlen(lOpcode) > 0) exit(2);
-        			exit(4);	
+        			exit(4);
         		}
         		if (isDuplicate(lLabel, symbolTable, tableLoc, 0) == 0) //Check if the label has already been used
         		{
@@ -288,7 +288,7 @@ int firstPass(FILE *in, TableEntry symbolTable[], char *startingAddress)
         	}
         	programCounter += 2;
         }
-   } 
+   }
    while (lRet != DONE);
    if(endLocated == 0) exit(4); //No .end statement
    return tableLoc;
@@ -708,7 +708,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
         			char offsetChar[10];
-        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);	
+        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
         		else exit(1);
@@ -722,7 +722,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
         			char offsetChar[10];
-        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);	
+        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
         		else exit(1);
@@ -736,7 +736,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
         			char offsetChar[10];
-        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);	
+        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
         		else exit(1);
@@ -750,7 +750,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
         			char offsetChar[10];
-        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);	
+        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
         		else exit(1);
@@ -764,7 +764,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
         			char offsetChar[10];
-        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);	
+        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
         		else exit(1);
@@ -778,7 +778,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
         			char offsetChar[10];
-        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);	
+        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
         		else exit(1);
@@ -793,7 +793,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
         			char offsetChar[10];
-        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);	
+        			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
         		else exit(1);
@@ -807,7 +807,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			if (isInSymbolTable2(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset11
         		{
         			char offsetChar[12];
-        			toBinary(isInSymbolTable2(lArg1, symbolTable, tableLoc, starting+programCounter+2), 11, offsetChar);	
+        			toBinary(isInSymbolTable2(lArg1, symbolTable, tableLoc, starting+programCounter+2), 11, offsetChar);
         			strcat(bin, offsetChar);
         		}
         		else exit(1);
@@ -818,7 +818,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         	memset(bin, 0, 17); //Clear array
         	programCounter += 2;
         }
-    } 
+    }
     while( lRet != DONE );
     printf("a\n");
 }
@@ -893,7 +893,7 @@ void outputHex(char *digit, FILE *out)
 //Appends immediate
 void appendImmediate(char *bin, char *lLabel)
 {
-	char bino[6] = "hello";
+	char bino[6] = "hellp";
 	toBinary(toNum(lLabel), 5, bino);
 	strcat(bin, bino);
 }
@@ -941,7 +941,7 @@ void toBinary(int num, int digits, char* result)
 		{
 			result[index] = '0';
 			index--;
-		} 
+		}
 	}
 	else
 	{
@@ -959,7 +959,7 @@ void toBinary(int num, int digits, char* result)
 			result[index] = '0';
 			index--;
 		}
-		twosComplement(result, digits); 
+		twosComplement(result, digits);
 	}
 }
 
@@ -983,7 +983,7 @@ void twosComplement(char *in, int digits)
 			carry = '1';
 			in[index] = '0';
 		}
-		else 
+		else
 		{
 			carry = '0';
 			in[index] = '1';
@@ -1019,7 +1019,7 @@ int onlySpaces(char *spaces)
 {
 	//printf("called\n");
 	if(strlen(spaces) == 0) return 1;
-	for (int i = 0; i < strlen(spaces); i++) 
+	for (int i = 0; i < strlen(spaces); i++)
 	{
 		if(spaces[i] != ' ') return 0;
 	}
@@ -1031,7 +1031,7 @@ int isDuplicate(char *labelo, TableEntry symbolTable[], int tableLoc, int tracke
 {
 	if (tableLoc == tracker) return 0; //reached end of area of importance
 	if (strcmp(symbolTable[tracker].label, labelo) == 0) return 1; //found duplicate
-	else return(isDuplicate(labelo, symbolTable, tableLoc, tracker + 1)); //next 
+	else return(isDuplicate(labelo, symbolTable, tableLoc, tracker + 1)); //next
 }
 
 int isValidRegister(char *lLabel)
@@ -1093,7 +1093,7 @@ int isValidLabel(char *lLabel)
 	if (strcmp(lLabel, "r5") == 0) return 0;
 	if (strcmp(lLabel, "r6") == 0) return 0;
 	if (strcmp(lLabel, "r7") == 0) return 0;
-	return 1; 
+	return 1;
 }
 
 //Checks if an input is alphanumeric

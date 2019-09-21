@@ -257,6 +257,10 @@ int firstPass(FILE *in, TableEntry symbolTable[], char *startingAddress)
         if (lRet != DONE && lRet != EMPTY_LINE)
         {
         	if (lLabel[0] == ';') continue; //Check for comments
+					if (strcmp(lOpcode, ".orig") == 0) //Check for erroneously placed .orig statement
+					{
+						exit(4);
+					}
         	if (strcmp(lOpcode, ".end") == 0) //Check for .end statement
         	{
         		if(onlySpaces(lLabel) == 0 || onlySpaces(lArg1) == 0) exit(4);

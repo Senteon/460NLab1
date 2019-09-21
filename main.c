@@ -893,7 +893,7 @@ void outputHex(char *digit, FILE *out)
 //Appends immediate
 void appendImmediate(char *bin, char *lLabel)
 {
-	char bino[6] = "hellp";
+	char bino[6] = "hello";
 	toBinary(toNum(lLabel), 5, bino);
 	strcat(bin, bino);
 }

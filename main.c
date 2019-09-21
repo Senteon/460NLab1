@@ -1,3 +1,10 @@
+/*
+	Name 1: Bilal Quraishi
+	Name 2: Darius Zinolabedini
+	UTEID 1: buq57
+	UTEID 2: djz333
+*/
+
 #include <stdio.h> /* standard input/output library */
 #include <stdlib.h> /* Standard C Library */
 #include <string.h> /* String operations library */

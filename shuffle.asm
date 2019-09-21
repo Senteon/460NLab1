@@ -1,6 +1,6 @@
 			.ORIG x3000
 	 		LEA R1, x4C ;Load 3050 to R1
-Loop 	LDB R2, R1, #0 ;Load first byte
+LOOP 	LDB R2, R1, #0 ;Load first byte
 	 		LDB R3, R1, #1 ;Load second byte
 			AND R4, R4, #0 ;Clear R4
 			ADD R4, R4, R2 ;Add first byte to R4
@@ -12,5 +12,5 @@ Loop 	LDB R2, R1, #0 ;Load first byte
 			STB R2, R1, #1
 			ADD R1, R1, #2 ;Increment memory address
 			ADD R0, R0, #-1 ;Decrement size
-			BRP Loop
+			BRP LOOP
 			.END

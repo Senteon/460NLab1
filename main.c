@@ -54,6 +54,7 @@ int isValidOffset(char *lLabel);
 int isValidTrapVector(char *lLabel);
 int isInSymbolTable(char *lLabel, TableEntry symbolTable[], int tableLoc, int address);
 int isInSymbolTable2(char *lLabel, TableEntry symbolTable[], int tableLoc, int address);
+int isInSymbolTable3(char *lLabel, TableEntry symbolTable[], int tableLoc, int address);
 
 
 
@@ -64,7 +65,7 @@ int main(int argc, char* argv[])
 	FILE *outfile;
 	char pLine[MAX_LINE_LENGTH + 1] = {0}; //Initialize pointers to be passed
 	char *pLabel, *pOpcode, *pArg1, *pArg2, *pArg3, *pArg4;
-	char startingAddress[5] = "hill";
+	char startingAddress[6] = {0};
 	int addressFlag = 1;
 	int tableLoc;
 
@@ -98,16 +99,21 @@ int main(int argc, char* argv[])
     if ((strlen(pArg2) > 0) && (pArg2[0] != ';')) exit(4);
     if (pArg1[0] == '#') //If address is decimal
     {
-    	char decimalAddress[17];
-    	char result[6];
-    	char digits[5];
+    	char decimalAddress[17] = {0};
+    	char result[6] = {0};
+    	char digits[5] = {0};
     	toBinary(toNum(pArg1), 16, decimalAddress);
     	toHexNoOutput(decimalAddress, digits);
     	result[0] = 'x';
     	strcat(result, digits);
     	strncpy(startingAddress, result, sizeof(startingAddress));
     }
-    else{strncpy(startingAddress, pArg1, sizeof(startingAddress));} //Find starting address;
+    else
+		{
+			strncpy(startingAddress, pArg1, sizeof(startingAddress));
+			startingAddress[5] = '\0';
+		}
+		//Find starting address;
     if (determineValidHex(startingAddress, addressFlag) == 0) exit(3); //Incorrect address formatting
 
     /*First Pass*/
@@ -288,7 +294,8 @@ int firstPass(FILE *in, TableEntry symbolTable[], char *startingAddress)
         			strncpy(symbolTable[tableLoc].label, lLabel, MAX_LABEL_LEN); //add the address
         			if (strcmp(lOpcode, ".fill") == 0) //Check if there is a .fill statement
         			{
-        				if(lArg1[0] == '#');
+								if (isValidLabel(lArg1)) {}
+        				else if(lArg1[0] == '#');
         				else if(determineValidHex(lArg1, notAddress) == 0) exit(4); //Check if the hex value is valid (not address allows it to be odd)
         				if(onlySpaces(lArg2) == 0) exit(4); //Cant have a second argument
         				symbolTable[tableLoc].fillValue = toNum(lArg1); //Store value in symbol table
@@ -341,8 +348,18 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
 
     		if (strcmp(lOpcode, ".fill") == 0) //Check for .fil statement
     		{
-    			if (strlen(lArg1) > 5) exit(4);
-    			if (lArg1[0] == '#')
+					if (isValidLabel(lArg1))
+					{
+						char offsetChar[17] = {0};
+						toBinary(isInSymbolTable3(lArg1, symbolTable, tableLoc, starting+programCounter+2), 16, offsetChar);
+						strcat(bin, offsetChar);
+						seperateHex(bin, out);
+    				memset(bin, 0, 17); //Clear array
+        			programCounter += 2;
+    				continue;
+					}
+    			else if (strlen(lArg1) > 5) exit(4);
+    			else if (lArg1[0] == '#')
     			{
     				toBinary(toNum(lArg1), 16, bin);
     				seperateHex(bin, out);
@@ -704,7 +721,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         		}
         		if (isInSymbolTable(lArg2, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
-        			char offsetChar[10];
+        			char offsetChar[10] = {0};
         			toBinary(isInSymbolTable(lArg2, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -718,7 +735,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			strcat(bin, "0000111");
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
-        			char offsetChar[10];
+        			char offsetChar[10] = {0};
         			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -732,7 +749,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			strcat(bin, "0000100");
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
-        			char offsetChar[10];
+        			char offsetChar[10] = {0};
         			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -746,7 +763,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			strcat(bin, "0000110");
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
-        			char offsetChar[10];
+        			char offsetChar[10] = {0};
         			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -760,7 +777,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			strcat(bin, "0000101");
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
-        			char offsetChar[10];
+        			char offsetChar[10] = {0};
         			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -774,7 +791,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			strcat(bin, "0000010");
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
-        			char offsetChar[10];
+        			char offsetChar[10] = {0};
         			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -788,7 +805,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			strcat(bin, "0000001");
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
-        			char offsetChar[10];
+        			char offsetChar[10] = {0};
         			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -803,7 +820,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			strcat(bin, "0000011");
        			if (isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset9
         		{
-        			char offsetChar[10];
+        			char offsetChar[10] = {0};
         			toBinary(isInSymbolTable(lArg1, symbolTable, tableLoc, starting+programCounter+2), 9, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -817,7 +834,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        			strcat(bin, "01001");
        			if (isInSymbolTable2(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset11
         		{
-        			char offsetChar[12];
+        			char offsetChar[12] = {0};
         			toBinary(isInSymbolTable2(lArg1, symbolTable, tableLoc, starting+programCounter+2), 11, offsetChar);
         			strcat(bin, offsetChar);
         		}
@@ -825,7 +842,6 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         		if ((strlen(lArg2) > 0) && (lArg2[0] != ';')) exit(4);
        			seperateHex(bin, out);
        		}
-
         	memset(bin, 0, 17); //Clear array
         	programCounter += 2;
         }
@@ -859,6 +875,19 @@ int isInSymbolTable2(char *lLabel, TableEntry symbolTable[], int tableLoc, int a
 		}
 	}
 	return -9001;
+}
+
+int isInSymbolTable3(char *lLabel, TableEntry symbolTable[], int tableLoc, int address)
+{
+	for (int i = 0; i < tableLoc; i++)
+	{
+		if (strcmp(symbolTable[i].label, lLabel) == 0)
+		{
+			if((symbolTable[i].address- address)/2 < -256 | (symbolTable[i].address- address)/2 > 255) exit(3);
+			return(symbolTable[i].address);
+		}
+	}
+	return -999;
 }
 
 //Isolates each 4 binary digits

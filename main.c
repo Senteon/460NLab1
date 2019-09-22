@@ -87,6 +87,7 @@ int main(int argc, char* argv[])
 
     // ORIG checks//
     int returnValue = readAndParse(infile, pLine, &pLabel, &pOpcode, &pArg1, &pArg2, &pArg3, &pArg4); //Check for .ORIG
+		printf("test");
     while((strlen(pLabel) >= 0))
     {
     	if (strcmp(pOpcode, ".orig") == 0) break;

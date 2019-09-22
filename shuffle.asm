@@ -8,5 +8,6 @@ LOOP	LDB R2, R1, #0 ;Load first byte
 	ADD R1, R1, #2 ;Increment memory address
 	ADD R0, R0, #-1 ;Decrement size
 	BRP LOOPA
+	HALT
 ADDR	.FILL x3050
 	.END

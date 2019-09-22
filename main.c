@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 	FILE *outfile;
 	char pLine[MAX_LINE_LENGTH + 1] = {0}; //Initialize pointers to be passed
 	char *pLabel, *pOpcode, *pArg1, *pArg2, *pArg3, *pArg4;
-	char startingAddress[5];
+	char startingAddress[5] = "hill";
 	int addressFlag = 1;
 	int tableLoc;
 
@@ -87,7 +87,6 @@ int main(int argc, char* argv[])
 
     // ORIG checks//
     int returnValue = readAndParse(infile, pLine, &pLabel, &pOpcode, &pArg1, &pArg2, &pArg3, &pArg4); //Check for .ORIG
-		printf("test");
     while((strlen(pLabel) >= 0))
     {
     	if (strcmp(pOpcode, ".orig") == 0) break;

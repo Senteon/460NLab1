@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 	FILE *outfile;
 	char pLine[MAX_LINE_LENGTH + 1] = {0}; //Initialize pointers to be passed
 	char *pLabel, *pOpcode, *pArg1, *pArg2, *pArg3, *pArg4;
-	char startingAddress[7] = {0};
+	char startingAddress[6] = {0};
 	int addressFlag = 1;
 	int tableLoc;
 
@@ -100,12 +100,11 @@ int main(int argc, char* argv[])
     if (pArg1[0] == '#') //If address is decimal
     {
     	char decimalAddress[17] = {0};
-    	char result[7] = {0};
+    	char result[6] = {0};
     	char digits[5] = {0};
     	toBinary(toNum(pArg1), 16, decimalAddress);
     	toHexNoOutput(decimalAddress, digits);
-    	result[0] = '0';
-	result[1] = 'x';
+    	result[0] = 'x';
     	strcat(result, digits);
     	strncpy(startingAddress, result, sizeof(startingAddress));
     }
@@ -116,11 +115,10 @@ int main(int argc, char* argv[])
 		    	char digits[5] = {0};
 		    	toBinary(toNum(pArg1), 16, decimalAddress);
 		    	toHexNoOutput(decimalAddress, digits);
-		    	result[0] = '0';
-			result[1] = 'x';
+		    	result[0] = 'x';
 		    	strcat(result, digits);
 		    	strncpy(startingAddress, result, sizeof(startingAddress));
-			startingAddress[6] = '\0';
+			startingAddress[5] = '\0';
 		}
 		//Find starting address;
     if (determineValidHex(startingAddress, addressFlag) == 0) exit(3); //Incorrect address formatting
@@ -128,7 +126,7 @@ int main(int argc, char* argv[])
     tableLoc = firstPass(infile, symbolTable, startingAddress);
     rewind(infile);
     //printSymbolTable(symbolTable, tableLoc);
-    fprintf (outfile, "%s\n", startingAddress);
+    fprintf (outfile, "0%s\n", startingAddress);
     secondPass(infile, outfile, symbolTable, startingAddress, tableLoc);
 
     fclose(infile); //Close files

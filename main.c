@@ -88,10 +88,10 @@ int main(int argc, char* argv[])
 
     // ORIG checks//
     int returnValue = readAndParse(infile, pLine, &pLabel, &pOpcode, &pArg1, &pArg2, &pArg3, &pArg4); //Check for .ORIG
-    while((strlen(pLabel) >= 0))
+    while(returnValue != DONE)
     {
     	if (strcmp(pOpcode, ".orig") == 0) break;
-    	if (strlen(pLabel) > 0) exit(4);
+    	if (((strcmp(pOpcode, ".orig") != 0) & (onlySpaces(pOpcode) == 0)) | (onlySpaces(pLabel) == 0)) exit(4);
     	returnValue = readAndParse(infile, pLine, &pLabel, &pOpcode, &pArg1, &pArg2, &pArg3, &pArg4); //next line
     }
     if (strcmp(pOpcode, ".orig") != 0) exit(4); //No .ORIG
@@ -110,12 +110,18 @@ int main(int argc, char* argv[])
     }
     else
 		{
-			strncpy(startingAddress, pArg1, sizeof(startingAddress));
+			char decimalAddress[17] = {0};
+		    	char result[6] = {0};
+		    	char digits[5] = {0};
+		    	toBinary(toNum(pArg1), 16, decimalAddress);
+		    	toHexNoOutput(decimalAddress, digits);
+		    	result[0] = 'x';
+		    	strcat(result, digits);
+		    	strncpy(startingAddress, result, sizeof(startingAddress));
 			startingAddress[5] = '\0';
 		}
 		//Find starting address;
     if (determineValidHex(startingAddress, addressFlag) == 0) exit(3); //Incorrect address formatting
-
     /*First Pass*/
     tableLoc = firstPass(infile, symbolTable, startingAddress);
     rewind(infile);
@@ -174,12 +180,12 @@ int determineValidHex(char *startingAddress, int addressFlag)
 	for (int i = 1; i < 5; i++)
 	{
 		char temp = *(startingAddress + i);
-		if ((temp >= 48 & temp <= 57) | (temp >= 97 & temp <= 102)) continue;
+		if ((temp >= 65 & temp <= 70) | (temp >= 48 & temp <= 57) | (temp >= 97 & temp <= 102)) continue;
 		return 0;
 	}
 	char t = *(startingAddress + 4);
 	if (addressFlag == 0) return 1;
-	if (t == '1' | t == '3' | t == '5' | t == '7' | t == '9' | t == 'B' | t == 'D' | t == 'F') return 0;
+	if (t == '1' | t == '3' | t == '5' | t == '7' | t == '9' | t == 'B' | t == 'D' | t == 'F' | t == 'b' | t == 'd' | t == 'f') return 0;
 	return 1;
 }
 
@@ -296,7 +302,7 @@ int firstPass(FILE *in, TableEntry symbolTable[], char *startingAddress)
         			{
 								if (isValidLabel(lArg1)) {}
         				else if(lArg1[0] == '#');
-        				else if(determineValidHex(lArg1, notAddress) == 0) exit(4); //Check if the hex value is valid (not address allows it to be odd)
+        				//else if(determineValidHex(lArg1, notAddress) == 0) exit(4); //Check if the hex value is valid (not address allows it to be odd)
         				if(onlySpaces(lArg2) == 0) exit(4); //Cant have a second argument
         				symbolTable[tableLoc].fillValue = toNum(lArg1); //Store value in symbol table
         			}
@@ -348,7 +354,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
 
     		if (strcmp(lOpcode, ".fill") == 0) //Check for .fil statement
     		{
-					if (isValidLabel(lArg1))
+					if (isValidLabel(lArg1) == 1)
 					{
 						char offsetChar[17] = {0};
 						toBinary(isInSymbolTable3(lArg1, symbolTable, tableLoc, starting+programCounter+2), 16, offsetChar);
@@ -359,7 +365,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
     				continue;
 					}
     			else if (strlen(lArg1) > 5) exit(4);
-    			else if (lArg1[0] == '#')
+    			/*else if (lArg1[0] == '#')
     			{
     				toBinary(toNum(lArg1), 16, bin);
     				seperateHex(bin, out);
@@ -375,7 +381,15 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         			programCounter += 2;
     				continue;
     			}
-    			else exit(4);
+			*/
+    			else
+			{
+				toBinary(toNum(lArg1), 16, bin);
+    				seperateHex(bin, out);
+    				memset(bin, 0, 17); //Clear array
+        			programCounter += 2;
+    				continue;
+			}
     			if ((strlen(lArg2) > 0) && (lArg2[0] != ';')) exit(4);
     		}
 
@@ -1131,6 +1145,7 @@ int isValidLabel(char *lLabel)
 	if (strcmp(lLabel, "r5") == 0) return 0;
 	if (strcmp(lLabel, "r6") == 0) return 0;
 	if (strcmp(lLabel, "r7") == 0) return 0;
+	if (onlySpaces(lLabel) == 1) return 0; //probably a comment
 	return 1;
 }
 

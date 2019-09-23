@@ -126,8 +126,7 @@ int main(int argc, char* argv[])
     tableLoc = firstPass(infile, symbolTable, startingAddress);
     rewind(infile);
     //printSymbolTable(symbolTable, tableLoc);
-    fputs (startingAddress, outfile);
-    fputs ("\n", outfile);
+    fprintf (outfile, "%s\n", startingAddress);
     secondPass(infile, outfile, symbolTable, startingAddress, tableLoc);
 
 
@@ -907,7 +906,7 @@ int isInSymbolTable3(char *lLabel, TableEntry symbolTable[], int tableLoc, int a
 //Isolates each 4 binary digits
 void seperateHex(char *bin, FILE *out)
 {
-	fputs("x", out);
+	fprintf(out, "x");
 	char temp[5];
 	temp[0] = bin[0]; temp[1] = bin[1]; temp[2] = bin[2]; temp[3] = bin[3]; temp[4] = '\0';
 	outputHex(temp, out);
@@ -917,28 +916,28 @@ void seperateHex(char *bin, FILE *out)
 	outputHex(temp, out);
 	temp[0] = bin[12]; temp[1] = bin[13]; temp[2] = bin[14]; temp[3] = bin[15]; temp[4] = '\0';
 	outputHex(temp, out);
-	fputs("\n", out);
+	fprintf(out, "\n");
 }
 
 //Outputs Hex characters
 void outputHex(char *digit, FILE *out)
 {
-	if(strcmp(digit, "0000") == 0) fputs("0", out);
-	else if(strcmp(digit, "0001") == 0) fputs("1", out);
-	else if(strcmp(digit, "0010") == 0) fputs("2", out);
-	else if(strcmp(digit, "0011") == 0) fputs("3", out);
-	else if(strcmp(digit, "0100") == 0) fputs("4", out);
-	else if(strcmp(digit, "0101") == 0) fputs("5", out);
-	else if(strcmp(digit, "0110") == 0) fputs("6", out);
-	else if(strcmp(digit, "0111") == 0) fputs("7", out);
-	else if(strcmp(digit, "1000") == 0) fputs("8", out);
-	else if(strcmp(digit, "1001") == 0) fputs("9", out);
-	else if(strcmp(digit, "1010") == 0) fputs("A", out);
-	else if(strcmp(digit, "1011") == 0) fputs("B", out);
-	else if(strcmp(digit, "1100") == 0) fputs("C", out);
-	else if(strcmp(digit, "1101") == 0) fputs("D", out);
-	else if(strcmp(digit, "1110") == 0) fputs("E", out);
-	else if(strcmp(digit, "1111") == 0) fputs("F", out);
+	if(strcmp(digit, "0000") == 0) fprintf(out, "0");
+	else if(strcmp(digit, "0001") == 0) fprintf(out, "1");
+	else if(strcmp(digit, "0010") == 0) fprintf(out, "2");
+	else if(strcmp(digit, "0011") == 0) fprintf(out, "3");
+	else if(strcmp(digit, "0100") == 0) fprintf(out, "4");
+	else if(strcmp(digit, "0101") == 0) fprintf(out, "5");
+	else if(strcmp(digit, "0110") == 0) fprintf(out, "6");
+	else if(strcmp(digit, "0111") == 0) fprintf(out, "7");
+	else if(strcmp(digit, "1000") == 0) fprintf(out, "8");
+	else if(strcmp(digit, "1001") == 0) fprintf(out, "9");
+	else if(strcmp(digit, "1010") == 0) fprintf(out, "A");
+	else if(strcmp(digit, "1011") == 0) fprintf(out, "B");
+	else if(strcmp(digit, "1100") == 0) fprintf(out, "C");
+	else if(strcmp(digit, "1101") == 0) fprintf(out, "D");
+	else if(strcmp(digit, "1110") == 0) fprintf(out, "E");
+	else if(strcmp(digit, "1111") == 0) fprintf(out, "F");
 }
 
 

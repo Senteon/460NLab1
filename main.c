@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 		    	toBinary(toNum(pArg1), 16, decimalAddress);
 		    	toHexNoOutput(decimalAddress, digits);
 		    	result[0] = '0';
-			result[0] = 'x';
+			result[1] = 'x';
 		    	strcat(result, digits);
 		    	strncpy(startingAddress, result, sizeof(startingAddress));
 			startingAddress[6] = '\0';

@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 	FILE *outfile;
 	char pLine[MAX_LINE_LENGTH + 1] = {0}; //Initialize pointers to be passed
 	char *pLabel, *pOpcode, *pArg1, *pArg2, *pArg3, *pArg4;
-	char startingAddress[6] = {0};
+	char startingAddress[7] = {0};
 	int addressFlag = 1;
 	int tableLoc;
 
@@ -100,11 +100,12 @@ int main(int argc, char* argv[])
     if (pArg1[0] == '#') //If address is decimal
     {
     	char decimalAddress[17] = {0};
-    	char result[6] = {0};
+    	char result[7] = {0};
     	char digits[5] = {0};
     	toBinary(toNum(pArg1), 16, decimalAddress);
     	toHexNoOutput(decimalAddress, digits);
-    	result[0] = 'x';
+    	result[0] = '0';
+	result[1] = 'x';
     	strcat(result, digits);
     	strncpy(startingAddress, result, sizeof(startingAddress));
     }
@@ -115,10 +116,11 @@ int main(int argc, char* argv[])
 		    	char digits[5] = {0};
 		    	toBinary(toNum(pArg1), 16, decimalAddress);
 		    	toHexNoOutput(decimalAddress, digits);
-		    	result[0] = 'x';
+		    	result[0] = '0';
+			result[0] = 'x';
 		    	strcat(result, digits);
 		    	strncpy(startingAddress, result, sizeof(startingAddress));
-			startingAddress[5] = '\0';
+			startingAddress[6] = '\0';
 		}
 		//Find starting address;
     if (determineValidHex(startingAddress, addressFlag) == 0) exit(3); //Incorrect address formatting
@@ -128,8 +130,6 @@ int main(int argc, char* argv[])
     //printSymbolTable(symbolTable, tableLoc);
     fprintf (outfile, "%s\n", startingAddress);
     secondPass(infile, outfile, symbolTable, startingAddress, tableLoc);
-
-
 
     fclose(infile); //Close files
     fclose(outfile);
@@ -361,9 +361,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
 						seperateHex(bin, out);
     				memset(bin, 0, 17); //Clear array
         			programCounter += 2;
-    				continue;
 					}
-    			else if (strlen(lArg1) > 5) exit(4);
     			/*else if (lArg1[0] == '#')
     			{
     				toBinary(toNum(lArg1), 16, bin);
@@ -387,7 +385,6 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
     				seperateHex(bin, out);
     				memset(bin, 0, 17); //Clear array
         			programCounter += 2;
-    				continue;
 			}
     			if ((strlen(lArg2) > 0) && (lArg2[0] != ';')) exit(4);
     		}
@@ -630,7 +627,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         		{
         			appendOffset(bin, lArg3);
         		}
-        		else exit(4);
+        		else exit(3);
         		if ((strlen(lArg4) > 0) && (lArg4[0] != ';')) exit(4);
         		seperateHex(bin, out);
        		}
@@ -652,7 +649,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         		{
         			appendOffset(bin, lArg3);
         		}
-        		else exit(4);
+        		else exit(3);
         		if ((strlen(lArg4) > 0) && (lArg4[0] != ';')) exit(4);
         		seperateHex(bin, out);
        		}
@@ -674,7 +671,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         		{
         			appendOffset(bin, lArg3);
         		}
-        		else exit(4);
+        		else exit(3);
         		if ((strlen(lArg4) > 0) && (lArg4[0] != ';')) exit(4);
         		seperateHex(bin, out);
        		}
@@ -696,7 +693,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
         		{
         			appendOffset(bin, lArg3);
         		}
-        		else exit(4);
+        		else exit(3);
         		if ((strlen(lArg4) > 0) && (lArg4[0] != ';')) exit(4);
         		seperateHex(bin, out);
        		}
@@ -711,17 +708,14 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        		if (strcmp(lOpcode, "trap") == 0) //check for trapvector
        		{
        			strcat(bin, "11110000");
-   				if (lArg1[0] != 'x') exit(4); //Must start with x
-   				if (strlen(lArg1) > 3) exit(4); //Must be less than three chars
+   				if (lArg1[0] != 'x') exit(3); //Must start with x
+				if (lArg1[1] == '-') exit(3); //no neg
+   				if (strlen(lArg1) > 3) exit(3); //Must be less than three chars
    				char temp[6];
    				temp[0] = 'x'; temp[1] = '0'; temp[2] = '0'; temp[3] = lArg1[1]; temp[4] = lArg1[2]; temp[5] = '\0';
-   				if (determineValidHex(temp, 0) == 0) exit(4);
-       			if (isValidTrapVector(lArg1) == 1)
-       			{
-       				appendTrapVector(bin, lArg1);
-       			}
-       			else exit(4);
-       			if ((strlen(lArg2) > 0) && (lArg2[0] != ';')) exit(4);
+   				if (determineValidHex(temp, 0) == 0) exit(3);
+				appendTrapVector(bin, lArg1);
+       			if ((strlen(lArg2) > 0) && (lArg2[0] != ';')) exit(3);
        			seperateHex(bin, out);
        		}
 
@@ -845,7 +839,7 @@ void secondPass(FILE *in, FILE *out, TableEntry symbolTable[], char *startingAdd
        		if (strcmp(lOpcode, "jsr") == 0) //check for jsr
        		{
        			strcat(bin, "01001");
-       			if (isInSymbolTable2(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -999) //Offset11
+       			if (isInSymbolTable2(lArg1, symbolTable, tableLoc, starting+programCounter+2) != -9001) //Offset11
         		{
         			char offsetChar[12] = {0};
         			toBinary(isInSymbolTable2(lArg1, symbolTable, tableLoc, starting+programCounter+2), 11, offsetChar);
@@ -906,7 +900,7 @@ int isInSymbolTable3(char *lLabel, TableEntry symbolTable[], int tableLoc, int a
 //Isolates each 4 binary digits
 void seperateHex(char *bin, FILE *out)
 {
-	fprintf(out, "x");
+	fprintf(out, "0x");
 	char temp[5];
 	temp[0] = bin[0]; temp[1] = bin[1]; temp[2] = bin[2]; temp[3] = bin[3]; temp[4] = '\0';
 	outputHex(temp, out);
@@ -1186,7 +1180,6 @@ int toNum(char * pStr)
     {
       if (!isdigit(*t_ptr))
       {
-         printf("Error: invalid decimal operand, %s\n",orig_pStr);
          exit(4);
       }
       t_ptr++;
@@ -1211,7 +1204,6 @@ int toNum(char * pStr)
     {
       if (!isxdigit(*t_ptr))
       {
-         printf("Error: invalid hex operand, %s\n",orig_pStr);
          exit(4);
       }
       t_ptr++;
@@ -1224,7 +1216,6 @@ int toNum(char * pStr)
   }
   else
   {
-        printf( "Error: invalid operand, %s\n", orig_pStr);
         exit(4);  /* This has been changed from error code 3 to error code 4, see clarification 12 */
   }
 }
